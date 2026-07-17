@@ -167,6 +167,21 @@ python lib/cli_tool.py add-task Alice "Write unit tests"
 # Complete a task
 python lib/cli_tool.py complete-task Alice "Write unit tests"
 ```
+Run commands using Python's module flag, since `cli_tool.py` lives inside the `lib` package and imports from it:
+
+```bash
+# Add a task
+python -m lib.cli_tool add-task Alice "Write unit tests"
+
+# Complete a task
+python -m lib.cli_tool complete-task Alice "Write unit tests"
+```
+
+Run the automated test suite:
+
+```bash
+pytest -x testing/test_cli_tool.py
+```
 
 ---
 
@@ -188,5 +203,10 @@ After completing this lab, you will:
 ✅ Map real-world entities using object-oriented design  
 ✅ Create terminal experiences with helpful input/output  
 ✅ Apply argparse and OOP to real development workflows
+## Implementation Notes
 
+- `lib/models.py` defines `Task` and `User` exactly as specified, including `User.get_task_by_title()` for looking up a task by name.
+- `lib/cli_tool.py` wires `add-task` and `complete-task` subcommands to `add_task()`/`complete_task()`, which delegate to the `Task`/`User` classes.
+- The CLI entry point is wrapped in `if __name__ == "__main__":`, so `cli_tool.py` can also be safely imported (e.g. by tests) without triggering `argparse` on import.
+- Run the tool as a module (`python -m lib.cli_tool ...`) rather than as a standalone script, since it uses an absolute import (`from lib.models import Task, User`) that requires `lib` to be recognized as a package.
 These skills help you build maintainable CLI tools that scale with complexity and support real-world use cases.
