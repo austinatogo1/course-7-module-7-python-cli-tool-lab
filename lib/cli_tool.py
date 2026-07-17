@@ -1,25 +1,36 @@
-# cli_tool.py
-
 import argparse
-from models import Task, User
+from lib.models import Task, User
 
 # Global dictionary to store users and their tasks
 users = {}
 
-# TODO: Implement function to add a task for a user
-def add_task(args):
-    # - Check if the user exists, if not, create one
-    # - Create a new Task with the given title
-    # - Add the task to the user's task list
-    pass
 
-# TODO: Implement function to mark a task as complete
+def add_task(args):
+    # Check if the user exists, if not, create one
+    user = users.get(args.user)
+    if user is None:
+        user = User(args.user)
+        users[args.user] = user
+    # Create a new Task with the given title
+    task = Task(args.title)
+    # Add the task to the user's task list
+    user.add_task(task)
+
+
 def complete_task(args):
-    # - Look up the user by name
-    # - Look up the task by title
-    # - Mark the task as complete
-    # - Print appropriate error messages if not found
-    pass
+    # Look up the user by name
+    user = users.get(args.user)
+    if user is None:
+        print("❌ User not found.")
+        return
+    # Look up the task by title
+    task = user.get_task_by_title(args.title)
+    if task is None:
+        print("❌ Task not found.")
+        return
+    # Mark the task as complete
+    task.complete()
+
 
 # CLI entry point
 def main():
@@ -43,6 +54,7 @@ def main():
         args.func(args)
     else:
         parser.print_help()
+
 
 if __name__ == "__main__":
     main()
